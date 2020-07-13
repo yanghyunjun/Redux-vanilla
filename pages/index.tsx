@@ -5,15 +5,19 @@ import { connect } from "react-redux";
 
 const Container = styled.div``;
 
-const index: NextPage = (props) => {
-  console.log(props);
+interface IProps {
+  toDos: any;
+}
+
+const index: NextPage<IProps> = ({ toDos }) => {
+  console.log(toDos);
   const [toDoText, setToDoText] = useState("");
   const onChange = (e) => {
     setToDoText(e.target.value);
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(toDoText);
+    // console.log(toDoText);
   };
   return (
     <Container>
@@ -32,8 +36,8 @@ const index: NextPage = (props) => {
   );
 };
 
-// const getCurrentState = (state) => {
-//   return { state };
-// };
+function getCurrentState(state) {
+  return { toDos: state };
+}
 
-export default index;
+export default connect(index)(getCurrentState);
