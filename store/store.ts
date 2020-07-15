@@ -1,34 +1,33 @@
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
+import { HYDRATE, createWrapper } from "next-redux-wrapper";
+import thunkMiddleware from "redux-thunk";
+import reducers from "./reducers";
 
-const add = "ADD";
-const del = "DELETE";
-
-export const addTodo = (text) => {
-  return {
-    type: add,
-    text,
-  };
+const bindMiddleware = (middleware) => {
+  if (process.env.NODE_ENV !== "production") {
+    const { composeWithDevTools } = require("redux-devtools-extension");
+    return composeWithDevTools(applyMiddleware(...middleware));
+  }
+  return applyMiddleware(...middleware);
 };
 
-export const delTodo = (id) => {
-  return {
-    type: del,
-    id,
-  };
-};
+const combinedReducer = reducers;
 
-const reducer = (state = ["number"], action) => {
-  switch (action.type) {
-    case add:
-      return [{ text: action.text, id: Date.now() }, ...state];
-    case del:
-    // return state.filter((todo) => todo.id !== action.id);
-
-    default:
-      return state;
+const reducer = (state, action) => {
+  if (action.type === HYDRATE) {
+    const nextState = {
+      ...state,
+      ...action.payload,
+    };
+    if (state.count) nextState.count = state.count;
+    return nextState;
+  } else {
+    return combinedReducer(state, action);
   }
 };
 
-const store = createStore(reducer);
+const initStore = () => {
+  return createStore(reducer, bindMiddleware([thunkMiddleware]));
+};
 
-export default store;
+export const wrapper = createWrapper(initStore);

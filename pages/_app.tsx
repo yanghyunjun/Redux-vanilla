@@ -1,15 +1,16 @@
-import { AppProps, AppInitialProps } from "next/app";
-import GlobalStyle from "../styles/GlobalStyle";
-import { Provider } from "react-redux";
-import store from "../store/store";
+import App from "next/app";
+import { wrapper } from "../store/store";
 
-const MyApp = ({ Component, pageProps }: AppProps & AppInitialProps) => {
-  return (
-    <Provider store={store}>
-      <GlobalStyle />
-      <Component {...pageProps} />
-    </Provider>
-  );
-};
+class WrappedApp extends App {
+  render() {
+    const { Component, pageProps } = this.props;
 
-export default MyApp;
+    return (
+      <>
+        <Component {...pageProps} />
+      </>
+    );
+  }
+}
+
+export default wrapper.withRedux(WrappedApp);
