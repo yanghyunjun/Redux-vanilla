@@ -1,16 +1,22 @@
-import App from "next/app";
-import { wrapper } from "../store/store";
+import App, { Container } from "next/app";
+import React from "react";
+import { Provider } from "react-redux";
+import { store } from "../store";
+interface Any {
+  apolloClient: any;
+}
 
-class WrappedApp extends App {
+class MyApp extends App<Any> {
   render() {
     const { Component, pageProps } = this.props;
-
     return (
-      <>
-        <Component {...pageProps} />
-      </>
+      <Container>
+        <Provider store={store}>
+          <Component {...pageProps} />
+        </Provider>
+      </Container>
     );
   }
 }
 
-export default wrapper.withRedux(WrappedApp);
+export default MyApp;

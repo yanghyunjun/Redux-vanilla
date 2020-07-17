@@ -15,12 +15,12 @@ export const delTodo = (id) => {
   };
 };
 
-const reducers = (state = ["number"], action) => {
+const reducers = (state = [], action) => {
   switch (action.type) {
     case add:
       return [{ text: action.text, id: Date.now() }, ...state];
     case del:
-    // return state.filter((todo) => todo.id !== action.id);
+      return state.filter((todo) => todo.id !== action.id);
 
     default:
       return state;
